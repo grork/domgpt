@@ -1,0 +1,272 @@
+:root {
+  --chat-history-half-margin: 12px;
+  --chat-background-colour: white;
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Signifier;
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://cdn.openai.com/common/fonts/signifier/signifier-light.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Signifier;
+  font-style: italic;
+  font-weight: 400;
+  src: url(https://cdn.openai.com/common/fonts/signifier/signifier-light-italic.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Signifier;
+  font-style: normal;
+  font-weight: 700;
+  src: url(https://cdn.openai.com/common/fonts/signifier/signifier-bold.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Signifier;
+  font-style: italic;
+  font-weight: 700;
+  src: url(https://cdn.openai.com/common/fonts/signifier/signifier-bold-italic.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Söhne;
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://cdn.openai.com/common/fonts/soehne/soehne-buch.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Söhne;
+  font-style: italic;
+  font-weight: 400;
+  src: url(https://cdn.openai.com/common/fonts/soehne/soehne-buch-kursiv.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Söhne;
+  font-style: normal;
+  font-weight: 500;
+  src: url(https://cdn.openai.com/common/fonts/soehne/soehne-kraftig.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Söhne;
+  font-style: italic;
+  font-weight: 500;
+  src: url(https://cdn.openai.com/common/fonts/soehne/soehne-kraftig-kursiv.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Söhne;
+  font-style: normal;
+  font-weight: 600;
+  src: url(https://cdn.openai.com/common/fonts/soehne/soehne-halbfett.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Söhne;
+  font-style: italic;
+  font-weight: 600;
+  src: url(https://cdn.openai.com/common/fonts/soehne/soehne-halbfett-kursiv.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Söhne Mono;
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://cdn.openai.com/common/fonts/soehne/soehne-mono-buch.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Söhne Mono;
+  font-style: normal;
+  font-weight: 700;
+  src: url(https://cdn.openai.com/common/fonts/soehne/soehne-mono-halbfett.woff2) format("woff2")
+}
+
+@font-face {
+  font-display: swap;
+  font-family: Söhne Mono;
+  font-style: italic;
+  font-weight: 400;
+  src: url(https://cdn.openai.com/common/fonts/soehne/soehne-mono-buch-kursiv.woff2) format("woff2")
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  font-family: sans-serif;
+  align-items: stretch;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 100%;
+  font-family: Söhne,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,Helvetica Neue,Arial,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body > div {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.chat-history {
+  width: 260px;
+  background-color: rgb(32, 33, 35);
+  color: rgb(236, 236, 241);
+  flex-shrink: 0;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-history > div:hover {
+  background-color: rgb(42, 43, 50);
+}
+
+.chat-history > div {
+  position: relative;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  margin-left: 8px;
+  margin-right: 8px;
+  border-radius: 4px;
+  padding-top: var(--chat-history-half-margin);
+  padding-bottom: var(--chat-history-half-margin);
+  padding-left: 12px;
+  line-height: 24px;
+  overflow-x: hidden;
+  max-height: calc(24px + (2 * var(--chat-history-half-margin)));
+}
+
+.chat-history-button {
+  margin-top: auto;
+  margin-left: var(--chat-history-half-margin);
+  margin-right: var(--chat-history-half-margin);
+  height: 36px;
+}
+
+.chat-history-gradient {
+  position: absolute;
+  width: 36px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  background-image: linear-gradient(to left, rgb(32, 33, 35), rgba(32, 33, 35, 0));
+}
+
+.chat-response {
+  background-color: var(--chat-background-colour);
+  flex-grow: 1;
+  max-width: 100%;
+  line-height: 28px;
+  color: rgb(55, 65, 81);
+  font-size: 16px;
+  overflow-y: scroll;
+}
+
+.chat-response p {
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+.chat-response > div:first-child {
+  padding-top: var(--chat-history-half-margin);
+}
+
+.chat-response > div {
+  border-color: rgba(0, 0, 0, 0.1);
+  border-style: solid;
+  border-top-width: 0px;
+  border-right-width: 0px;
+  border-left-width: 0px;
+  border-bottom-width: 1px;
+  padding-bottom: 36px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.chat-question > div,
+.chat-answer > div {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 768px;
+  display: flex;
+}
+
+.chat-question:first-of-type {
+  padding-top: 0px;
+}
+
+.chat-question,
+.chat-answer {
+  padding-top: var(--chat-history-half-margin);
+  padding-bottom: var(--chat-history-half-margin);
+  width: 100%;
+}
+
+.chat-answer {
+  background-color: rgb(247, 247, 248);
+}
+
+.chat-avatar-asker,
+.chat-avatar-bot {
+  width: 36px;
+  height: 36px;
+  background: skyblue;
+  margin-right: var(--chat-history-half-margin);
+  flex-shrink: 0;
+}
+
+.chat-text {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  margin-left: var(--chat-history-half-margin)
+}
+
+.chat-block-cursor {
+  display: inline-block;
+  width: 16px;
+  height: 20px;
+  margin-left: 8px;
+  margin-bottom: -4px;
+  color: black;
+  background-color: black;
+  animation: cursor-blink 750ms infinite;
+}
+
+@keyframes cursor-blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  51% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+}
