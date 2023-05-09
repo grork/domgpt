@@ -141,11 +141,24 @@ body {
   flex-direction: column;
 }
 
-.chat-history>div:hover {
+.chat-history>div:hover,
+.chat-history>a:hover {
   background-color: rgb(42, 43, 50);
 }
 
-.chat-history>div {
+.chat-history>a svg {
+  flex-shrink: 0;
+  margin-right: 8px;
+  height: 16px;
+  width: 16px;
+}
+
+.chat-history>div,
+.chat-history>button,
+.chat-history>a {
+  user-select: none;
+  align-items: center;
+  display: flex;
   position: relative;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -159,6 +172,7 @@ body {
   line-height: 24px;
   overflow-x: hidden;
   max-height: calc(24px + (2 * var(--chat-history-half-margin)));
+  cursor:pointer;
 }
 
 .chat-history-button {

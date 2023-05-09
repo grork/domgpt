@@ -40,10 +40,56 @@ const message = [
     ]
 ];
 
+const questions = [
+    "When is Dominic on Vacation?",
+    "Where is Dominic going on Vacation?"
+];
+
 function delay(duration: number): Promise<void> {
     return new Promise<void>((r) => {
         setTimeout(r, duration);
     });
+}
+
+function cloneIntoWithPartsFromName<T>(templateName: string, target: Element): T {
+    const template = document.querySelector<HTMLTemplateElement>(`[data-template='${templateName}']`)!;
+
+    return cloneIntoWithParts(template, target);
+}
+
+function cloneIntoWithParts<T>(template: HTMLTemplateElement, target: Element): T {
+    const content = document.importNode(template.content, true);
+
+    const parts: T = locatePartsFromDOM(content);
+
+    target.appendChild(content);
+
+    return parts;
+}
+
+function locatePartsFromDOM<T>(element: HTMLElement | DocumentFragment): T {
+    const query = "[data-part]";
+    const elements = Array.from(element.querySelectorAll(query));
+
+    // Make sure that the node we're starting from is included.
+    // querySelector only finds descendants of the element, not the element
+    // itself.
+    if (element.nodeType !== Node.DOCUMENT_FRAGMENT_NODE) {
+        if ((<Element>element).matches(query)) {
+            elements.push(<Element>element);
+        }
+    }
+
+    const parts = elements.reduce<any>(
+        (localParts: any, el: Element) => {
+            const partName = el.getAttribute("data-part")!;
+            el.removeAttribute("data-part");
+            localParts[partName] = el;
+            return localParts;
+        },
+        {});
+    
+    return parts;
 }
 
 async function renderTextResponse(container: HTMLElement, words: string[]) {
@@ -142,11 +188,17 @@ function submitQuestion(e: Event) {
     return false;
 }
 
-const addButton = document.querySelector("button[data-id='add-answer']") as HTMLButtonElement;
+function renderHistoryItem(container: HTMLDivElement, question: string) {
+    const stuff = cloneIntoWithPartsFromName<{ question: HTMLDivElement; interactive: HTMLAnchorElement }>("history-template", container);
+    stuff.question.textContent = question;
+    stuff.interactive.addEventListener("click", () => renderQuestion(chatResponse, question));
+}
+
 const entryForm = document.querySelector("form[data-id='entry-form'") as HTMLFormElement;
 const entryInput = document.querySelector("input[data-id='question-input']") as HTMLInputElement;
 const chatResponse = document.querySelector(".chat-response > .chat-scroller") as HTMLDivElement;
-addButton!.addEventListener("click", () => renderAnswerResponse(chatResponse, message[0]));
+const chatHistory = document.querySelector(".chat-history") as HTMLDivElement;
+
 entryForm.addEventListener("submit", submitQuestion);
 entryInput.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key !== "Enter") {
@@ -154,3 +206,7 @@ entryInput.addEventListener("keydown", (e: KeyboardEvent) => {
     }
     submitQuestion(e);
 });
+
+for (const q of questions) {
+    renderHistoryItem(chatHistory, q);
+}

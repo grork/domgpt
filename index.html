@@ -7,22 +7,20 @@
 </head>
 
 <body>
-    <div class="chat-history">
-        <div>When is dominic on vacation?<div class="chat-history-gradient"></div>
-        </div>
-        <div>Where is dominic going on vacation?<div class="chat-history-gradient"></div>
-        </div>
-        <div>How should I contact dominic while he's away?<div class="chat-history-gradient"></div>
-        </div>
-        <div>If I can't contact dominic, who should I contact for the items he's working on?<div
-                class="chat-history-gradient"></div>
-        </div>
-        <div>I would like something interesting to think about while he's away. Give me something!<div
-                class="chat-history-gradient"></div>
-        </div>
+    <template data-template="history-template">
+        <a data-part="interactive"> 
+            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+                stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
 
-        <button class="chat-history-button" data-id="add-answer">Add Answer</button>
-    </div>
+            <div data-part="question"></div>
+            
+            <div class="chat-history-gradient"></div>
+
+        </a>
+    </template>
+    <div class="chat-history"></div>
     <div class="chat-response">
         <div class="chat-scroller">
             <div class="chat-question">
