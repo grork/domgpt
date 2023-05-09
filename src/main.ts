@@ -86,7 +86,7 @@ async function renderMessagePartToContainer(container: HTMLElement, messageToPri
     }
 }
 
-async function renderAnswerMessage(container: HTMLElement, messagesToPrint: IMessageElement[]) {
+async function renderAnswerResponse(container: HTMLElement, messagesToPrint: IMessageElement[]) {
     // Main answer element
     const answerContainer = document.createElement("div");
     answerContainer.classList.toggle("chat-answer", true);
@@ -110,8 +110,47 @@ async function renderAnswerMessage(container: HTMLElement, messagesToPrint: IMes
     }
 }
 
+function renderQuestion(container: HTMLElement, question: string) {
+    const questionContainer = document.createElement("div");
+    questionContainer.classList.toggle("chat-question", true);
+
+    const wrapper = document.createElement("div");
+    questionContainer.appendChild(wrapper);
+    const avatar = document.createElement("div");
+
+    // Avatar
+    avatar.classList.toggle("chat-avatar-asker", true);
+    wrapper.appendChild(avatar);
+
+    // Text Response Container
+    var textWrapper = document.createElement("div")
+    textWrapper.classList.toggle("chat-text", true);
+    textWrapper.textContent = question;
+    wrapper.appendChild(textWrapper);
+
+    container.appendChild(questionContainer);
+}
+
+function submitQuestion(e: Event) {
+    const question = entryInput.value;
+    entryInput.value = "";
+    
+    renderQuestion(chatResponse, question);
+
+    renderAnswerResponse(chatResponse, message[1]);
+    e.preventDefault();
+    return false;
+}
+
 const addButton = document.querySelector("button[data-id='add-answer']") as HTMLButtonElement;
+const entryForm = document.querySelector("form[data-id='entry-form'") as HTMLFormElement;
+const entryInput = document.querySelector("input[data-id='question-input']") as HTMLInputElement;
 const chatResponse = document.querySelector(".chat-response > .chat-scroller") as HTMLDivElement;
-addButton!.addEventListener("click", () => {
-    renderAnswerMessage(chatResponse, message[0]);
+addButton!.addEventListener("click", () => renderAnswerResponse(chatResponse, message[0]));
+entryForm.addEventListener("submit", submitQuestion);
+entryInput.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key !== "Enter") {
+        return;
+    }
+    submitQuestion(e);
 });

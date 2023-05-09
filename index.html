@@ -72,10 +72,10 @@
             </div>
         </div>
         <div class="chat-entry">
-            <div>
+            <form data-id="entry-form" name="question-form">
                 <div class="chat-entry-container">
-                    <textarea rows="1" placeholder="Send a message"></textarea>
-                    <button disabled>
+                    <input rows="1" placeholder="Send a message" form="question-form" data-id="question-input"></input>
+                    <button type="submit">
                         <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
                             stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em"
                             xmlns="http://www.w3.org/2000/svg">
@@ -84,7 +84,7 @@
                         </svg>
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </body>
