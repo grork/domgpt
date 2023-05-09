@@ -3,6 +3,7 @@ interface IMessageElement {
     content: String | IMessageElement[];
 }
 
+
 const message = [
     [
         {
@@ -36,6 +37,10 @@ const message = [
                     ]
                 }
             ]
+        },
+        {
+            el: "img",
+            content: "me.jpg"
         }
     ]
 ];
@@ -44,6 +49,12 @@ const questions = [
     { text: "When is Dominic on Vacation?", response: 0 },
     { text: "Where is Dominic going on Vacation?", response: 1 }
 ];
+
+const tutorial = {
+    examples: ["Explain where Dominic is?", "Suggest when Dominic might be back?", "Who is this Dominic person?"],
+    capabilities: ["Barely remembers what was said before", "Can't be corrected, because it's just a hash lookup", "trained to be barely helpful"],
+    limitations: [ "Hallucinates. Very specifically.", "Can't be coerced into giving harmful instructions", "Limited knowledge of events after May 12th 2023"]
+}
 
 function delay(duration: number): Promise<void> {
     return new Promise<void>((r) => {
@@ -108,7 +119,7 @@ async function renderTextResponse(container: HTMLElement, words: string[]) {
 
         container.offsetParent?.scrollTo(0, container.offsetTop + container.offsetHeight);
 
-        await delay(74);        
+        await delay(50);        
     }
 
     blockCursor.remove();
@@ -121,10 +132,14 @@ async function renderMessagePartToContainer(container: HTMLElement, messageToPri
     }
 
     if (typeof messageToPrint.content === "string") {
-        // Actual content wrapper
-        const text = document.createElement("span");
-        cannedResponseContainer.appendChild(text);
-        await renderTextResponse(text, messageToPrint.content.split(" "));
+        if (messageToPrint.el === "img") {
+            (<HTMLImageElement>cannedResponseContainer).src = messageToPrint.content;
+        } else {
+            // Actual content wrapper
+            const text = document.createElement("span");
+            cannedResponseContainer.appendChild(text);
+            await renderTextResponse(text, messageToPrint.content.split(" "));
+        }
     } else if (messageToPrint.content instanceof Array) {
         for (const child of messageToPrint.content) {
             await renderMessagePartToContainer(cannedResponseContainer, child);
@@ -154,6 +169,11 @@ function submitQuestion(question: string) {
             break;
         }
     }
+
+    if (chatResponse.firstElementChild?.hasAttribute("data-placeholder")) {
+        chatResponse.innerHTML = "";
+    }
+
     renderQuestion(chatResponse, question);
     renderAnswerResponse(chatResponse, message[response]);
 }
@@ -170,7 +190,35 @@ function getAndClearQuestion(): string {
     return question;
 }
 
+function renderExamples(container: HTMLDivElement) {
+    function getExampleElement(text: string): HTMLElement {
+        const itemElement = document.createElement("div");
+        itemElement.classList.toggle("chat-example-item", true);
+        itemElement.textContent = text;
+
+        return itemElement;
+    }
+
+    container.innerHTML = "";
+    const parts: { 
+        examples: HTMLDivElement,
+        capabilities: HTMLDivElement,
+        limitations:  HTMLDivElement
+    } = cloneIntoWithPartsFromName("examples-template", container);
+
+    for (const item of tutorial.examples) {
+        parts.examples.appendChild(getExampleElement(item));
+    }
+    for (const item of tutorial.capabilities) {
+        parts.capabilities.appendChild(getExampleElement(item));
+    }
+    for (const item of tutorial.limitations) {
+        parts.limitations.appendChild(getExampleElement(item));
+    }
+}
+
 const entryForm = document.querySelector("form[data-id='entry-form'") as HTMLFormElement;
+const newChat = document.querySelector("a[data-id='new-chat']") as HTMLAnchorElement;
 const entryInput = document.querySelector("input[data-id='question-input']") as HTMLInputElement;
 const chatResponse = document.querySelector(".chat-response > .chat-scroller") as HTMLDivElement;
 const chatHistory = document.querySelector(".chat-history") as HTMLDivElement;
@@ -192,6 +240,13 @@ entryInput.addEventListener("keydown", (e: KeyboardEvent) => {
     submitQuestion(getAndClearQuestion());    
 });
 
+newChat.addEventListener("click", () => {
+    renderExamples(chatResponse);
+    entryInput.value = "";
+});
+
 for (const q of questions) {
     renderHistoryItem(chatHistory, q);
 }
+
+renderExamples(chatResponse);
