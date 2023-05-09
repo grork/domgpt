@@ -260,6 +260,11 @@ body {
   flex-shrink: 0;
 }
 
+.chat-avatar-bot {
+  background-image: url("public/me.jpg");
+  background-size: contain;
+}
+
 .chat-text {
   margin-top: 0px;
   margin-bottom: 4px;
