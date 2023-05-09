@@ -177,6 +177,7 @@ body > div {
 }
 
 .chat-response {
+  position: relative;
   background-color: var(--chat-background-colour);
   flex-grow: 1;
   max-width: 100%;
@@ -184,6 +185,7 @@ body > div {
   color: rgb(55, 65, 81);
   font-size: 16px;
   overflow-y: scroll;
+  padding-bottom: 124px;
 }
 
 .chat-response p {
@@ -202,9 +204,10 @@ body > div {
   border-right-width: 0px;
   border-left-width: 0px;
   border-bottom-width: 1px;
-  padding-bottom: 36px;
+  padding-bottom: 24px;
   padding-left: 12px;
   padding-right: 12px;
+  scroll-padding-bottom: 124px;
 }
 
 .chat-question > div,

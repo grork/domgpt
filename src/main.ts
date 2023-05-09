@@ -24,14 +24,29 @@ const message = [
                 },
                 {
                     el: "li",
-                    content: "2lb of apples"
+                    content: [
+                        {
+                            el: "strong",
+                            content: "Spicy"
+                        },
+                        {
+                            el: "",
+                            content: " peppers"
+                        }
+                    ]
                 }
             ]
         }
     ]
 ];
 
-function renderTextResponse(container: HTMLElement, words: string[]) {
+function delay(duration: number): Promise<void> {
+    return new Promise<void>((r) => {
+        setTimeout(r, duration);
+    });
+}
+
+async function renderTextResponse(container: HTMLElement, words: string[]) {
     let blockCursor = container.nextElementSibling;
     if (!blockCursor) {
         // Faux cursor that goes at the end
@@ -41,19 +56,37 @@ function renderTextResponse(container: HTMLElement, words: string[]) {
         container.parentElement?.appendChild(blockCursor);
     }
 
-    const word = words.shift();
-    container.textContent += ` ${word}`;
-    container.parentElement?.parentElement?.parentElement?.scrollIntoView(false);
+    while (words.length > 0) {
+        const word = words.shift();
+        container.textContent += `${word}${words.length > 0 ? ' ' : ''}`;
 
-    if (words.length > 0) {
-        setTimeout(() => renderTextResponse(container, words), 74);
-    } else {
-        blockCursor.remove();
+        container.offsetParent?.scrollTo(0, container.offsetTop + container.offsetHeight);
+
+        await delay(74);        
+    }
+
+    blockCursor.remove();
+}
+
+async function renderMessagePartToContainer(container: HTMLElement, messageToPrint: IMessageElement) {
+    const cannedResponseContainer = messageToPrint.el ? document.createElement(messageToPrint.el) : container;
+    if (container !== cannedResponseContainer) {
+        container.appendChild(cannedResponseContainer);
+    }
+
+    if (typeof messageToPrint.content === "string") {
+        // Actual content wrapper
+        const text = document.createElement("span");
+        cannedResponseContainer.appendChild(text);
+        await renderTextResponse(text, messageToPrint.content.split(" "));
+    } else if (messageToPrint.content instanceof Array) {
+        for (const child of messageToPrint.content) {
+            await renderMessagePartToContainer(cannedResponseContainer, child);
+        }
     }
 }
 
-function renderAnswerMessage(container: HTMLElement, messageToPrint: IMessageElement) {
-
+async function renderAnswerMessage(container: HTMLElement, messagesToPrint: IMessageElement[]) {
     // Main answer element
     const answerContainer = document.createElement("div");
     answerContainer.classList.toggle("chat-answer", true);
@@ -67,24 +100,18 @@ function renderAnswerMessage(container: HTMLElement, messageToPrint: IMessageEle
     answerWrapper.appendChild(avatar);
 
     // Text Response Container
-    const textContainer = document.createElement(messageToPrint.el);
-    textContainer.classList.toggle("chat-text", true);
-
-    // Actual content wrapper
-    const text = document.createElement("span");
-    textContainer.appendChild(text);
+    var textWrapper = document.createElement("div")
+    textWrapper.classList.toggle("chat-text", true);
+    answerWrapper.appendChild(textWrapper);
 
     container.appendChild(answerContainer);
-    if (typeof messageToPrint.content === "string") {
-        answerWrapper.appendChild(textContainer);
-        renderTextResponse(text, messageToPrint.content.split(" "));
-    } else if (messageToPrint.content instanceof Array) {
-        text.textContent = "Not Supported";
+    for (const messageToPrint of messagesToPrint) {
+        await renderMessagePartToContainer(textWrapper, messageToPrint);
     }
 }
 
 const addButton = document.querySelector("button[data-id='add-answer']") as HTMLButtonElement;
 const chatResponse = document.querySelector(".chat-response") as HTMLDivElement;
 addButton!.addEventListener("click", () => {
-    renderAnswerMessage(chatResponse, message[0][0]);
+    renderAnswerMessage(chatResponse, message[0]);
 });
