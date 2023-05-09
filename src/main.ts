@@ -111,7 +111,7 @@ async function renderAnswerMessage(container: HTMLElement, messagesToPrint: IMes
 }
 
 const addButton = document.querySelector("button[data-id='add-answer']") as HTMLButtonElement;
-const chatResponse = document.querySelector(".chat-response") as HTMLDivElement;
+const chatResponse = document.querySelector(".chat-response > .chat-scroller") as HTMLDivElement;
 addButton!.addEventListener("click", () => {
     renderAnswerMessage(chatResponse, message[0]);
 });
