@@ -41,8 +41,8 @@ const message = [
 ];
 
 const questions = [
-    "When is Dominic on Vacation?",
-    "Where is Dominic going on Vacation?"
+    { text: "When is Dominic on Vacation?", response: 0 },
+    { text: "Where is Dominic going on Vacation?", response: 1 }
 ];
 
 function delay(duration: number): Promise<void> {
@@ -133,65 +133,41 @@ async function renderMessagePartToContainer(container: HTMLElement, messageToPri
 }
 
 async function renderAnswerResponse(container: HTMLElement, messagesToPrint: IMessageElement[]) {
-    // Main answer element
-    const answerContainer = document.createElement("div");
-    answerContainer.classList.toggle("chat-answer", true);
+    const answerParts: { response: HTMLDivElement } = cloneIntoWithPartsFromName("response-template", container);
 
-    // Wrapper that centres the message, and has the avatar + text container
-    const answerWrapper = answerContainer.appendChild(document.createElement("div"));
-    const avatar = document.createElement("div");
-
-    // Avatar
-    avatar.classList.toggle("chat-avatar-bot", true);
-    answerWrapper.appendChild(avatar);
-
-    // Text Response Container
-    var textWrapper = document.createElement("div")
-    textWrapper.classList.toggle("chat-text", true);
-    answerWrapper.appendChild(textWrapper);
-
-    container.appendChild(answerContainer);
     for (const messageToPrint of messagesToPrint) {
-        await renderMessagePartToContainer(textWrapper, messageToPrint);
+        await renderMessagePartToContainer(answerParts.response, messageToPrint);
     }
 }
 
 function renderQuestion(container: HTMLElement, question: string) {
-    const questionContainer = document.createElement("div");
-    questionContainer.classList.toggle("chat-question", true);
+    const questionWrapper: { question: HTMLDivElement } = cloneIntoWithPartsFromName("question-template", container);
 
-    const wrapper = document.createElement("div");
-    questionContainer.appendChild(wrapper);
-    const avatar = document.createElement("div");
-
-    // Avatar
-    avatar.classList.toggle("chat-avatar-asker", true);
-    wrapper.appendChild(avatar);
-
-    // Text Response Container
-    var textWrapper = document.createElement("div")
-    textWrapper.classList.toggle("chat-text", true);
-    textWrapper.textContent = question;
-    wrapper.appendChild(textWrapper);
-
-    container.appendChild(questionContainer);
+    questionWrapper.question.textContent = question;
 }
 
-function submitQuestion(e: Event) {
-    const question = entryInput.value;
-    entryInput.value = "";
-    
+function submitQuestion(question: string) {
+    let response = 0;
+    for (const item of questions) {
+        if (item.text === question) {
+            response = item.response;
+            break;
+        }
+    }
     renderQuestion(chatResponse, question);
-
-    renderAnswerResponse(chatResponse, message[1]);
-    e.preventDefault();
-    return false;
+    renderAnswerResponse(chatResponse, message[response]);
 }
 
-function renderHistoryItem(container: HTMLDivElement, question: string) {
+function renderHistoryItem(container: HTMLDivElement, question: { text: string, response: number }) {
     const stuff = cloneIntoWithPartsFromName<{ question: HTMLDivElement; interactive: HTMLAnchorElement }>("history-template", container);
-    stuff.question.textContent = question;
-    stuff.interactive.addEventListener("click", () => renderQuestion(chatResponse, question));
+    stuff.question.textContent = question.text;
+    stuff.interactive.addEventListener("click", () => submitQuestion(question.text));
+}
+
+function getAndClearQuestion(): string {
+    var question = entryInput.value;
+    entryInput.value;
+    return question;
 }
 
 const entryForm = document.querySelector("form[data-id='entry-form'") as HTMLFormElement;
@@ -199,12 +175,21 @@ const entryInput = document.querySelector("input[data-id='question-input']") as 
 const chatResponse = document.querySelector(".chat-response > .chat-scroller") as HTMLDivElement;
 const chatHistory = document.querySelector(".chat-history") as HTMLDivElement;
 
-entryForm.addEventListener("submit", submitQuestion);
+entryForm.addEventListener("submit", (e: SubmitEvent) => {
+    e.preventDefault();
+
+    submitQuestion(getAndClearQuestion());
+
+    return false;
+});
+
 entryInput.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key !== "Enter") {
         return;
     }
-    submitQuestion(e);
+
+    e.preventDefault();
+    submitQuestion(getAndClearQuestion());    
 });
 
 for (const q of questions) {
