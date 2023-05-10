@@ -289,6 +289,10 @@ body {
   animation: cursor-blink 750ms infinite;
 }
 
+img[src='ai.png'] {
+  width: 512px;
+}
+
 @keyframes cursor-blink {
   0% {
     opacity: 1;
