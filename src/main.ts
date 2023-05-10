@@ -171,12 +171,15 @@ function submitQuestion(question: string) {
 function renderHistoryItem(container: HTMLDivElement, question: string) {
     const stuff = cloneIntoWithPartsFromName<{ question: HTMLDivElement; interactive: HTMLAnchorElement }>("history-template", container);
     stuff.question.textContent = question;
-    stuff.interactive.addEventListener("click", () => submitQuestion(question));
+    stuff.interactive.addEventListener("click", () => {
+        chatResponse.innerHTML = "";
+        submitQuestion(question);
+    });
 }
 
 function getAndClearQuestion(): string {
     var question = entryInput.value;
-    entryInput.value;
+    entryInput.value = "";
     return question;
 }
 
