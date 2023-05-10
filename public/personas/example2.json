@@ -1,8 +1,8 @@
 {
     "questions": [
-        "What is the flight speed of an unladen swallow?",
-        "How far is it to tiperary?",
-        "How much wood, can a woodchuck chuck when a woodchuck chucks wood?"
+        { "id": "swallow", "text": "What is the flight speed of an unladen swallow?" },
+        { "id": "travel", "text": "How far is it to tiperary?" },
+        { "id": "wood", "text": "How much wood, can a woodchuck chuck when a woodchuck chucks wood?" }
     ],
     "tutorial": {
         "examples": [

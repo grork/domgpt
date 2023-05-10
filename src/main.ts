@@ -1,5 +1,6 @@
 interface IMessageElement {
     el: string;
+    href?: string;
     content: String | IMessageElement[];
 }
 
@@ -15,9 +16,14 @@ interface IResponse {
 }
 
 interface IPersona {
-    questions: string[];
+    questions: IQuestion[];
     tutorial: ITutorial;
     responses: IResponse[]
+}
+
+interface IQuestion {
+    id: string;
+    text: string;
 }
 
 let responses: { [details: string]: IMessageElement[]; } = {};
@@ -107,6 +113,11 @@ async function renderMessagePartToContainer(container: HTMLElement, messageToPri
         container.appendChild(cannedResponseContainer);
     }
 
+    if (messageToPrint.href) {
+        cannedResponseContainer.setAttribute("target", "_blank");
+        cannedResponseContainer.setAttribute("href", messageToPrint.href);
+    }
+
     if (typeof messageToPrint.content === "string") {
         if (messageToPrint.el === "img") {
             (<HTMLImageElement>cannedResponseContainer).src = messageToPrint.content;
@@ -132,7 +143,7 @@ async function renderAnswerResponse(container: HTMLElement, messagesToPrint: IMe
 }
 
 function findFirstMatchinResponse(question: string): IMessageElement[] {
-    question = question.replace(/[^\w\s]/i, "");
+    question = question.replace(/[^\w\s]/i, "").toLocaleLowerCase();
     const parts = question.split(" ");
 
     for (const p of parts) {
@@ -172,7 +183,6 @@ function renderHistoryItem(container: HTMLDivElement, question: string) {
     const stuff = cloneIntoWithPartsFromName<{ question: HTMLDivElement; interactive: HTMLAnchorElement }>("history-template", container);
     stuff.question.textContent = question;
     stuff.interactive.addEventListener("click", () => {
-        chatResponse.innerHTML = "";
         submitQuestion(question);
     });
 }
@@ -251,7 +261,7 @@ try {
 } catch (e) { }
 
 for (const q of persona.questions) {
-    renderHistoryItem(chatHistory, q);
+    renderHistoryItem(chatHistory, q.text);
 }
 
 for (const r of persona.responses) {
@@ -260,4 +270,11 @@ for (const r of persona.responses) {
     }
 }
 
-renderExamples(chatResponse);
+const requestedQuestion = params.get("q");
+const cannedQuestion = persona.questions.find((q) => q.id === requestedQuestion)
+
+if (cannedQuestion) {
+    submitQuestion(cannedQuestion.text);
+} else {
+    renderExamples(chatResponse);
+}

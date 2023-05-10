@@ -1,8 +1,8 @@
 {
     "questions": [
-        "What is the first question?",
-        "What is the one question?",
-        "What is the second question?"
+        { "id": "first", "text": "What is the first question?" },
+        { "id": "fourth", "text": "What is the one question?" },
+        { "id": "other", "text": "What is the second question?" }
     ],
     "tutorial": {
         "examples": [
