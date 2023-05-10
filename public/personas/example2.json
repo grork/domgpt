@@ -1,0 +1,77 @@
+{
+    "questions": [
+        "What is the flight speed of an unladen swallow?",
+        "How far is it to tiperary?",
+        "How much wood, can a woodchuck chuck when a woodchuck chucks wood?"
+    ],
+    "tutorial": {
+        "examples": [
+            "Witty example, making you laugh",
+            "Reading this makes you laugh, doesn't it?",
+            "GO GO GO GADGET LAUGH"
+        ],
+        "capabilities": [
+            "Tells jokes",
+            "Makes you laugh",
+            "Maybe even roll your eyes 🙄"
+        ],
+        "limitations": [
+            "Isn't actually funny",
+            "Really, it's not funny",
+            "Too close to marvin the robot"
+        ]
+    },
+    "responses": [
+        {
+            "keywords": [
+                "speed", "swallow"
+            ],
+            "messages": [
+                {
+                    "el": "p",
+                    "content": "Slowly at first, and then quickly. Birds everywhere, swans, eagles. All of them pale in comparison. 🐥. Penguins don't even rank."
+                },
+                {
+                    "el": "ul",
+                    "content": [
+                        {
+                            "el": "li",
+                            "content": "African"
+                        },
+                        {
+                            "el": "li",
+                            "content": [
+                                {
+                                    "el": "strong",
+                                    "content": "European"
+                                },
+                                {
+                                    "el": "",
+                                    "content": " swallow"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "el": "img",
+                    "content": "me.jpg"
+                }
+            ]
+        },
+        {
+            "keywords": [
+                "chuck"
+            ],
+            "messages": [
+                {
+                    "el": "p",
+                    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Neque viverra justo nec ultrices dui sapien eget mi. Ullamcorper morbi tincidunt ornare massa eget egestas purus viverra accumsan. Ut pharetra sit amet aliquam. Dui sapien eget mi proin. Enim eu turpis egestas pretium. Sit amet consectetur adipiscing elit. Purus in mollis nunc sed id. Varius duis at consectetur lorem donec massa sapien faucibus et. At varius vel pharetra vel turpis nunc. Cursus turpis massa tincidunt dui. Diam volutpat commodo sed egestas egestas fringilla phasellus faucibus. Quis hendrerit dolor magna eget est lorem ipsum. Faucibus nisl tincidunt eget nullam. Ut etiam sit amet nisl purus in mollis nunc. Et molestie ac feugiat sed lectus vestibulum mattis ullamcorper. Dui accumsan sit amet nulla facilisi morbi tempus."
+                },
+            {
+                "el": "p",
+                "content": "Id aliquet risus feugiat in ante metus dictum at tempor. Pretium viverra suspendisse potenti nullam ac tortor vitae purus faucibus. Mauris in aliquam sem fringilla ut morbi tincidunt augue. Pellentesque nec nam aliquam sem. Ultrices in iaculis nunc sed. Gravida cum sociis natoque penatibus et magnis dis parturient. Tristique senectus et netus et malesuada. Sed risus ultricies tristique nulla aliquet enim tortor. Integer feugiat scelerisque varius morbi enim nunc faucibus. Ornare massa eget egestas purus viverra. Amet nulla facilisi morbi tempus iaculis urna id volutpat lacus. Nibh cras pulvinar mattis nunc. Donec massa sapien faucibus et molestie. Ipsum nunc aliquet bibendum enim facilisis gravida neque convallis a. Enim diam vulputate ut pharetra. Ac odio tempor orci dapibus ultrices in iaculis nunc sed. Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum. Sit amet dictum sit amet."
+            }]
+        }
+    ]
+}

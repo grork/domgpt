@@ -3,57 +3,33 @@ interface IMessageElement {
     content: String | IMessageElement[];
 }
 
+interface ITutorial {
+    examples: string[],
+    capabilities: string[],
+    limitations: string[]
+}
 
-const message = [
-    [
-        {
-            el: "p",
-            content: "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Nisi vitae suscipit tellus mauris. Est lorem ipsum dolor sit amet consectetur. Feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper morbi. Lectus mauris ultrices eros in cursus turpis massa. Duis ut diam quam nulla porttitor massa id neque aliquam. Dolor sit amet consectetur adipiscing elit pellentesque habitant. Ut eu sem integer vitae justo eget magna fermentum. Vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant. Convallis convallis tellus id interdum velit. Cras sed felis eget velit. Mattis aliquam faucibus purus in massa tempor nec."
-        }
-    ],
-    [
-        {
-            el: "p",
-            content: "The quick brown fox jumped over the lazy fox"
-        },
-        {
-            el: "ul",
-            content: [
-                {
-                    el: "li",
-                    content: "1 lb of Carrots"
-                },
-                {
-                    el: "li",
-                    content: [
-                        {
-                            el: "strong",
-                            content: "Spicy"
-                        },
-                        {
-                            el: "",
-                            content: " peppers"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            el: "img",
-            content: "me.jpg"
-        }
-    ]
-];
+interface IResponse {
+    keywords: string[];
+    messages: IMessageElement[]
+}
 
-const questions = [
-    { text: "When is Dominic on Vacation?", response: 0 },
-    { text: "Where is Dominic going on Vacation?", response: 1 }
-];
+interface IPersona {
+    questions: string[];
+    tutorial: ITutorial;
+    responses: IResponse[]
+}
 
-const tutorial = {
-    examples: ["Explain where Dominic is?", "Suggest when Dominic might be back?", "Who is this Dominic person?"],
-    capabilities: ["Barely remembers what was said before", "Can't be corrected, because it's just a hash lookup", "trained to be barely helpful"],
-    limitations: [ "Hallucinates. Very specifically.", "Can't be coerced into giving harmful instructions", "Limited knowledge of events after May 12th 2023"]
+let responses: { [details: string]: IMessageElement[]; } = {};
+
+let persona: IPersona = {
+    questions: [],
+    tutorial: {
+        examples: [],
+        capabilities: [],
+        limitations: []
+    },
+    responses: []
 }
 
 function delay(duration: number): Promise<void> {
@@ -99,7 +75,7 @@ function locatePartsFromDOM<T>(element: HTMLElement | DocumentFragment): T {
             return localParts;
         },
         {});
-    
+
     return parts;
 }
 
@@ -119,7 +95,7 @@ async function renderTextResponse(container: HTMLElement, words: string[]) {
 
         container.offsetParent?.scrollTo(0, container.offsetTop + container.offsetHeight);
 
-        await delay(50);        
+        await delay(50);
     }
 
     blockCursor.remove();
@@ -155,6 +131,25 @@ async function renderAnswerResponse(container: HTMLElement, messagesToPrint: IMe
     }
 }
 
+function findFirstMatchinResponse(question: string): IMessageElement[] {
+    question = question.replace(/[^\w\s]/i, "");
+    const parts = question.split(" ");
+
+    for (const p of parts) {
+        const response = responses[p];
+        if (response) {
+            return response;
+        }
+    }
+
+    return [
+        {
+            el: "p",
+            content: "I dunno mate. Did you try turning it on and off again?"
+        }
+    ]
+}
+
 function renderQuestion(container: HTMLElement, question: string) {
     const questionWrapper: { question: HTMLDivElement } = cloneIntoWithPartsFromName("question-template", container);
 
@@ -162,26 +157,21 @@ function renderQuestion(container: HTMLElement, question: string) {
 }
 
 function submitQuestion(question: string) {
-    let response = 0;
-    for (const item of questions) {
-        if (item.text === question) {
-            response = item.response;
-            break;
-        }
-    }
-
     if (chatResponse.firstElementChild?.hasAttribute("data-placeholder")) {
         chatResponse.innerHTML = "";
     }
 
     renderQuestion(chatResponse, question);
-    renderAnswerResponse(chatResponse, message[response]);
+
+    const response = findFirstMatchinResponse(question);
+
+    renderAnswerResponse(chatResponse, response);
 }
 
-function renderHistoryItem(container: HTMLDivElement, question: { text: string, response: number }) {
+function renderHistoryItem(container: HTMLDivElement, question: string) {
     const stuff = cloneIntoWithPartsFromName<{ question: HTMLDivElement; interactive: HTMLAnchorElement }>("history-template", container);
-    stuff.question.textContent = question.text;
-    stuff.interactive.addEventListener("click", () => submitQuestion(question.text));
+    stuff.question.textContent = question;
+    stuff.interactive.addEventListener("click", () => submitQuestion(question));
 }
 
 function getAndClearQuestion(): string {
@@ -200,19 +190,19 @@ function renderExamples(container: HTMLDivElement) {
     }
 
     container.innerHTML = "";
-    const parts: { 
+    const parts: {
         examples: HTMLDivElement,
         capabilities: HTMLDivElement,
-        limitations:  HTMLDivElement
+        limitations: HTMLDivElement
     } = cloneIntoWithPartsFromName("examples-template", container);
 
-    for (const item of tutorial.examples) {
+    for (const item of persona.tutorial.examples) {
         parts.examples.appendChild(getExampleElement(item));
     }
-    for (const item of tutorial.capabilities) {
+    for (const item of persona.tutorial.capabilities) {
         parts.capabilities.appendChild(getExampleElement(item));
     }
-    for (const item of tutorial.limitations) {
+    for (const item of persona.tutorial.limitations) {
         parts.limitations.appendChild(getExampleElement(item));
     }
 }
@@ -237,7 +227,7 @@ entryInput.addEventListener("keydown", (e: KeyboardEvent) => {
     }
 
     e.preventDefault();
-    submitQuestion(getAndClearQuestion());    
+    submitQuestion(getAndClearQuestion());
 });
 
 newChat.addEventListener("click", () => {
@@ -245,8 +235,26 @@ newChat.addEventListener("click", () => {
     entryInput.value = "";
 });
 
-for (const q of questions) {
+
+const params = new URLSearchParams(window.location.search);
+let personaFile = params.get("persona");
+if (!personaFile) {
+    personaFile = "example";
+}
+
+try {
+    let request = await fetch(`/personas/${personaFile}.json`);
+    persona = await request.json();
+} catch (e) { }
+
+for (const q of persona.questions) {
     renderHistoryItem(chatHistory, q);
+}
+
+for (const r of persona.responses) {
+    for (const k of r.keywords) {
+        responses[k] = r.messages;
+    }
 }
 
 renderExamples(chatResponse);
