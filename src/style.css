@@ -290,7 +290,11 @@ body {
 }
 
 img[src='ai.png'] {
-  width: 512px;
+  width: 360px;
+}
+
+img {
+  max-width: 500px;
 }
 
 @keyframes cursor-blink {
@@ -440,7 +444,7 @@ button>svg {
 }
 
 .chat-text iframe {
-  max-width: 768px;
+  max-width: 600px;
   width: 50vw;
   min-width: 400px;
 }
