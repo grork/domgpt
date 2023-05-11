@@ -438,3 +438,9 @@ button>svg {
   padding: 12px;
   margin-bottom: 12px;
 }
+
+.chat-text iframe {
+  max-width: 768px;
+  width: 50vw;
+  min-width: 400px;
+}

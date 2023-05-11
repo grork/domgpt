@@ -121,6 +121,9 @@ async function renderMessagePartToContainer(container: HTMLElement, messageToPri
     if (typeof messageToPrint.content === "string") {
         if (messageToPrint.el === "img") {
             (<HTMLImageElement>cannedResponseContainer).src = messageToPrint.content;
+        } else if (messageToPrint.el === "iframe") {
+            cannedResponseContainer.setAttribute("frameborder", "0");
+            (<HTMLIFrameElement>cannedResponseContainer).src = messageToPrint.content;
         } else {
             // Actual content wrapper
             const text = document.createElement("span");
@@ -143,7 +146,7 @@ async function renderAnswerResponse(container: HTMLElement, messagesToPrint: IMe
 }
 
 function findFirstMatchinResponse(question: string): IMessageElement[] {
-    question = question.replace(/[^\w\s]/i, "").toLocaleLowerCase();
+    question = question.replace(/[.,\/#!$%\^&\*;:{}'=\-_`~()\\?]/gi, "").toLocaleLowerCase();
     const parts = question.split(" ");
 
     for (const p of parts) {
